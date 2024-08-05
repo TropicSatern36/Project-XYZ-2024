@@ -1,6 +1,14 @@
+/*
+* This route is used to retrieve an image and then use it as a parameter
+* for processing with Python.
+* 
+* The Python script 'process_image.py' is expected to be in the 'bin' folder of the project
+* and is used for image processing.
+*/
+
 const express = require('express');
 const multer = require('multer');
-const { spawn } = require('child_process');
+const { spawn } = require('child_process');// allows for use of python in express
 const fs = require('fs');
 const path = require('path');
 const router = express.Router();
@@ -14,8 +22,9 @@ router.post('/', upload.single('image'), (req, res) => {
     }
 
     const imagePath = path.join(__dirname, '..', req.file.path);
-    const pythonScriptPath = path.join(__dirname, '..', 'bin', 'process_image.py');
     
+    //create the object that will hold and execute the python script
+    const pythonScriptPath = path.join(__dirname, '..', 'bin', 'process_image.py');
     const pythonProcess = spawn('python3', [pythonScriptPath, imagePath]);
 
     pythonProcess.stdout.on('data', (data) => {

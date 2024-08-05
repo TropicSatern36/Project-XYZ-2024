@@ -1,5 +1,11 @@
 #!/usr/bin/env node
 
+/*
+* Pregenerated file that starts the express node server with 
+* added functionality for .env file for devining server port
+*
+*/
+
 /**
  * Module dependencies.
  */
@@ -10,9 +16,8 @@ var app = require('../app');
 var debug = require('debug')('application:server');
 var http = require('http');
 
-/**
- * Get port from environment and store in Express.
- */
+
+//Get port from environment and store in Express. 
 require('dotenv').config();
 var port = normalizePort(process.env.PORT || '3000');
 app.set('port', port);

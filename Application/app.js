@@ -1,3 +1,11 @@
+/*
+*   This file mostly consists of pregenerated code from jsexpress
+*   
+*   This file defines what the frontend of the express application should do
+*
+*   It includes routes for handling and error message feedback
+*/
+
 var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
@@ -41,5 +49,5 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
-
+// export the module to the backend server in bin/www
 module.exports = app;

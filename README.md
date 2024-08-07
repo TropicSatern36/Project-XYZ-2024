@@ -8,3 +8,16 @@ Middleware
 
 ### Hatlane Lowane
 Image processing
+
+### Hendro Opperman
+Back End
+
+### Fu-Tung Thong
+Front End
+
+### Gladwell Mgwenya
+Front End
+
+### Gianni Snyders
+Front End
+

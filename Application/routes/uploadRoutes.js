@@ -9,7 +9,8 @@ const upload = multer({ dest: 'uploads/' });
 
 // Route to display the upload form
 router.get('/', (req, res) => {
-    res.render('upload');
+    //render html instead ejs
+    res.sendFile(path.join(__dirname,'../public','index.html'));
 });
 
 // Route to handle the file upload

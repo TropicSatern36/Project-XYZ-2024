@@ -1,0 +1,156 @@
+
+body {
+    font-family: 'Montserrat', sans-serif;
+    margin: 0;
+    padding: 0;
+    background: linear-gradient(135deg, #2b5876 0%, #4e4376 100%); /* Deep Blue and Purple Gradient */
+    color: #333;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+}
+
+header {
+    background: rgba(255, 255, 255, 0.15); /* Slightly lighter glass effect */
+    backdrop-filter: blur(10px);
+    color: #f7d794; /* Gold Text Color */
+    padding: 1.5rem 2rem;
+    text-align: center;
+    border-radius: 15px;
+    margin-top: 30px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    width: 90%;
+}
+
+/* Navigation Styling */
+nav {
+    background: rgba(0, 0, 0, 0.3); /* Darker glass effect */
+    backdrop-filter: blur(10px);
+    color: #ffffff;
+    padding: 1rem 2rem;
+    text-align: center;
+    border-radius: 15px;
+    margin: 2rem 0;
+    width: 90%;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+}
+
+nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+}
+
+nav ul li {
+    margin: 0 1.5rem;
+}
+
+nav ul li a {
+    color: #f7d794; /* Gold Text Color */
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.3s ease, transform 0.3s ease;
+}
+
+nav ul li a:hover {
+    color: #ffcc5c; /* Light Gold for Hover Effect */
+    transform: scale(1.1);
+}
+
+/* Main Content */
+main {
+    width: 90%;
+    max-width: 1200px;
+    margin: 2rem 0;
+}
+
+/* Section Styling */
+section {
+    background: rgba(255, 255, 255, 0.2); /* Slightly lighter glass effect */
+    backdrop-filter: blur(15px);
+    padding: 2rem;
+    margin-bottom: 2rem;
+    border-radius: 15px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+section:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+}
+
+h2 {
+    font-size: 2rem;
+    color: #ffcc5c; /* Light Gold for Headers */
+    margin-bottom: 1.5rem;
+    border-bottom: 3px solid #ffcc5c;
+    padding-bottom: 0.5rem;
+    text-align: center;
+    letter-spacing: 1px;
+}
+
+/* Image Preview */
+#imagePreview {
+    margin-top: 1.5rem;
+    text-align: center;
+}
+
+#imagePreview img {
+    max-width: 100%;
+    border-radius: 15px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+#imagePreview img:hover {
+    transform: scale(1.05);
+    box-shadow: 0 15px 25px rgba(0, 0, 0, 0.4);
+}
+
+/* Results Section */
+#results p {
+    font-size: 1.6rem;
+    color: #ffffff;
+    margin-bottom: 1rem;
+}
+
+#exportBtn {
+    background: linear-gradient(45deg, #1e3c72, #2a5298); /* Deep Blue Gradient */
+    color: white;
+    border: none;
+    padding: 0.8rem 2rem;
+    border-radius: 30px;
+    cursor: pointer;
+    font-size: 1.2rem;
+    font-weight: bold;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+    margin-top: 1rem;
+}
+
+#exportBtn:hover {
+    background: linear-gradient(45deg, #283c86, #45a247); /* Blue to Green Hover Effect */
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+}
+
+/* Footer Styling */
+footer {
+    background: rgba(0, 0, 0, 0.3); /* Darker glass effect */
+    backdrop-filter: blur(10px);
+    color: #ffffff;
+    text-align: center;
+    padding: 1.5rem 2rem;
+    margin-top: 2rem;
+    border-radius: 15px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+    width: 90%;
+    position: relative;
+    bottom: 0;
+}
+
+  
+  

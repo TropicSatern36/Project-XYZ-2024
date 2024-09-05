@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="/index.css">
+</head>
+<body>
+    <header>
+        <h1>WaterHyacinth Leaf Scarring Detection</h1>
+    </header>
+    <nav>
+        <ul>
+            <li><a href="#">Home</a></li>
+            <li><a href="#">Image Processing</a></li>
+            <li><a href="#">Results</a></li>
+            <li><a href="#">Settings</a></li>
+        </ul>
+    </nav>
+    <main>
+        <section id="upload-section">
+            <h2>Upload Image</h2>
+            <input type="file" id="imageInput" accept="image/*">
+            <div id="imagePreview"></div>
+          
+
+        </section>
+
+        <section id="results-section">
+            <h2>Results</h2>
+            <div id="results">
+                <p><strong>Number of Scars:</strong> <span id="scarCount">0</span></p>
+                <p><strong>Total Surface Area:</strong> <span id="surfaceArea">0 cm²</span></p>
+                <p><strong>Percentage Damage:</strong> <span id="damagePercent">0%</span></p>
+            </div>
+            <button id="exportBtn">Export Results</button>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2024 WaterHyacinth Project</p>
+    </footer>
+    
+    <script src="/index.js"></script>
+</body>
+</body>
+</html>

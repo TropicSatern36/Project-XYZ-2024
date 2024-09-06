@@ -1,5 +1,19 @@
 # Use an official Node.js runtime as a parent image
 FROM node:22
+# Install Python, pip, and required system packages
+RUN apt-get update && apt-get install -y \
+    python3 \
+    python3-pip \
+    python3-dev \
+    build-essential \
+    && apt-get clean
+
+# Install Python packages
+RUN pip3 install --no-cache-dir \
+    tensorflow \
+    numpy \
+    matplotlib
+
 
 # Set the working directory inside the container
 WORKDIR /app

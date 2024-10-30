@@ -83,17 +83,6 @@ async function imageProcessing(file) {
  * Simulated image processing results.
  * This function should be replaced with real image processing logic.
  */
-function simulateImageProcessing() {
-    // For demonstration, we'll just set some static values
-    const simulatedScarCount = 42; // Example scar count
-    const simulatedSurfaceArea = 250.75; // Example surface area in cm²
-    const simulatedDamagePercent = 16.8; // Example damage percentage
-
-    // Update the results section with simulated data
-    scarCount.textContent = simulatedScarCount;
-    surfaceArea.textContent = simulatedSurfaceArea + ' cm²';
-    damagePercent.textContent = simulatedDamagePercent + '%';
-}
 
 /**
  * Handle export button click.
@@ -101,7 +90,6 @@ function simulateImageProcessing() {
  * In a real application, you might generate a CSV or Excel file.
  */
 exportBtn.addEventListener('click', () => {
-    alert('Results exported successfully!');
 
     // Example: Generating a CSV string (could be sent to a server or downloaded)
     const csvContent = `
@@ -110,6 +98,13 @@ exportBtn.addEventListener('click', () => {
     `;
 
     console.log("Exported CSV content:\n", csvContent); // Output to console for now
+
+    // Send csv file to client
+    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = 'results.csv';
+    link.click();
 });
 
 /**

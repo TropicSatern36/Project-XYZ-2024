@@ -25,7 +25,11 @@ router.post('/', upload.single('image'), (req, res) => {
     
     //create the object that will hold and execute the python script
     const pythonScriptPath = path.join(__dirname, '..', 'bin', 'process_image.py');
-    const pythonProcess = spawn('python3', [pythonScriptPath, imagePath]);
+    const pythonProcess = spawn('python3', [pythonScriptPath]);
+
+    // Send image to python script
+    pythonProcess.stdin.write(JSON.stringify({ image_path: imagePath }));
+    pythonProcess.stdin.end(); // End the input stream to signal end of input
 
     pythonProcess.stdout.on('data', (data) => {
         try {

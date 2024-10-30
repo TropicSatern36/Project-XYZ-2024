@@ -4,8 +4,9 @@ if __name__ == "__main__":
 
     # image processor code goes here
     result = {
-        'leaf_area':5,
-        'scaring_area':3
+        'scarCount':42,
+        'surfaceArea':250.75,
+        'damagePercent':16.8
     }
     print(json.dumps(result))
     #returns a json object to express

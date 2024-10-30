@@ -16,7 +16,7 @@ const router = express.Router();
 const upload = multer({ dest: 'uploads/' });
 
 router.post('/', upload.single('image'), (req, res) => {
-    // Check if the file exists in the request
+    console.log('Received file:', req.file); // Log the received file object
     if (!req.file) {
         return res.status(400).json({ error: 'No file uploaded' });
     }
@@ -29,9 +29,11 @@ router.post('/', upload.single('image'), (req, res) => {
 
     pythonProcess.stdout.on('data', (data) => {
         try {
-            const result = JSON.parse(data.toString());
+            const result = JSON.parse(data.toString().trim());
+            console.log('Python script output:', result); // Print JSON object to console
             res.json(result);
         } catch (error) {
+            console.error('Failed to parse Python script output:', error);
             res.status(500).json({ error: 'Failed to parse Python script output' });
         }
     });
@@ -41,8 +43,16 @@ router.post('/', upload.single('image'), (req, res) => {
         res.status(500).send(data.toString());
     });
 
-    pythonProcess.on('close', () => {
-        fs.unlinkSync(imagePath); // Clean up uploaded file
+    pythonProcess.on('close', (code) => {
+        // Clean up uploaded file after processing
+        fs.unlink(imagePath, (err) => {
+            if (err) {
+                console.error('Error deleting file:', err);
+            }
+        });
+        
+        // Log exit code for debugging
+        console.log(`Python script exited with code ${code}`);
     });
 });
 

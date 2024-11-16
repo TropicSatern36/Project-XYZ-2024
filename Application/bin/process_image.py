@@ -4,13 +4,11 @@ import sys
 import json
 import numpy as np
 import cv2
-import os
 import tensorflow as tf
 
 if __name__ == "__main__":
     # Import model
     # print current directory to log
-    print(f"Current directory: {os.getcwd()}")
 
     model = tf.keras.models.load_model('bin/leaf_detection_model.h5')
 
@@ -19,8 +17,6 @@ if __name__ == "__main__":
     # Read the image from stdin
     input_data = sys.stdin.read().strip()
     image_path = json.loads(input_data)['image_path']
-
-    image_path = 'leaf_9.jpg'
 
     image = cv2.imread(image_path)
     image = cv2.resize(image, (img_height, img_width))

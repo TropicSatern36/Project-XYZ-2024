@@ -25,26 +25,31 @@ router.post('/', upload.single('image'), (req, res) => {
     
     //create the object that will hold and execute the python script
     const pythonScriptPath = path.join(__dirname, '..', 'bin', 'process_image.py');
+    
     const pythonProcess = spawn('python3', [pythonScriptPath]);
 
     // Send image to python script
     pythonProcess.stdin.write(JSON.stringify({ image_path: imagePath }));
     pythonProcess.stdin.end(); // End the input stream to signal end of input
 
+    let response = false;
+
     pythonProcess.stdout.on('data', (data) => {
         try {
             const result = JSON.parse(data.toString().trim());
             console.log('Python script output:', result); // Print JSON object to console
-            res.json(result);
-        } catch (error) {
-            console.error('Failed to parse Python script output:', error);
-            res.status(500).json({ error: 'Failed to parse Python script output' });
-        }
-    });
 
-    pythonProcess.stderr.on('data', (data) => {
-        console.error(`stderr: ${data}`);
-        res.status(500).send(data.toString());
+            if (!responseSent) {
+                responseSent = true;  // Mark the response as sent
+                res.json(result); // Send response to the client
+            }
+        } catch (error) {
+            console.error('Failed to parse Python script output:', error);            
+            if (!responseSent) {
+                responseSent = true;
+                res.status(500).json({ error: 'Failed to parse Python script output' });
+            }
+        }
     });
 
     pythonProcess.on('close', (code) => {
@@ -52,11 +57,30 @@ router.post('/', upload.single('image'), (req, res) => {
         fs.unlink(imagePath, (err) => {
             if (err) {
                 console.error('Error deleting file:', err);
+            } else {
+                console.log(`File ${imagePath} deleted after processing`);
             }
         });
         
         // Log exit code for debugging
         console.log(`Python script exited with code ${code}`);
+    });
+
+
+
+    pythonProcess.on('error', (err) => {
+        console.error('Error starting Python process:', err);
+        if (!responseSent) {
+            responseSent = true;
+            res.status(500).json({ error: 'Error starting Python process' });
+        }
+    });
+    pythonProcess.setTimeout(30000, () => { // Timeout after 30 seconds
+        if (!responseSent) {
+            responseSent = true;
+            pythonProcess.kill();
+            res.status(500).json({ error: 'Python script timed out' });
+        }
     });
 });
 

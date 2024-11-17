@@ -1,87 +1,105 @@
-/*
-* This route is used to retrieve an image and then use it as a parameter
-* for processing with Python.
-* 
-* The Python script 'process_image.py' is expected to be in the 'bin' folder of the project
-* and is used for image processing.
-*/
-
 const express = require('express');
 const multer = require('multer');
-const { spawn } = require('child_process');// allows for use of python in express
+const { spawn } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 const router = express.Router();
 
-const upload = multer({ dest: 'uploads/' });
+// Configure multer to save files with their original name and extension
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'uploads/'); // Save files in the 'uploads/' directory
+    },
+    filename: (req, file, cb) => {
+        const extname = path.extname(file.originalname); // Get file extension
+        const filename = Date.now() + extname; // Use timestamp for uniqueness
+        cb(null, filename); // Save the file with the generated filename
+    }
+});
+
+const upload = multer({ storage: storage });
 
 router.post('/', upload.single('image'), (req, res) => {
-    console.log('Received file:', req.file); // Log the received file object
-    if (!req.file) {
-        return res.status(400).json({ error: 'No file uploaded' });
+    console.log('Received file:', req.file);
+
+    // Check if file exists and is an image
+    if (!req.file || !req.file.mimetype.startsWith('image/')) {
+        return res.status(400).json({ error: 'No image file uploaded or invalid file type' });
     }
 
     const imagePath = path.join(__dirname, '..', req.file.path);
-    
-    //create the object that will hold and execute the python script
+    const homeDir = process.env.HOME || process.env.USERPROFILE; // HOME on Linux/macOS, USERPROFILE on Windows
+    const pythonEnvPath = path.join(homeDir, 'venv', 'bin', 'python');  // For macOS/Linux
     const pythonScriptPath = path.join(__dirname, '..', 'bin', 'process_image.py');
-    
-    const pythonProcess = spawn('python3', [pythonScriptPath]);
+    const pythonProcess = spawn(pythonEnvPath, [pythonScriptPath]);
 
-    // Send image to python script
+    //const pythonProcess = spawn('python3', [pythonScriptPath]);
+
     pythonProcess.stdin.write(JSON.stringify({ image_path: imagePath }));
-    pythonProcess.stdin.end(); // End the input stream to signal end of input
+    pythonProcess.stdin.end();
 
-    let response = false;
+    let output = ''; // To accumulate the Python output
 
+
+    // Handle data coming from Python process
     pythonProcess.stdout.on('data', (data) => {
-        try {
-            const result = JSON.parse(data.toString().trim());
-            console.log('Python script output:', result); // Print JSON object to console
+        output += data.toString(); // Append the data
 
-            if (!responseSent) {
-                responseSent = true;  // Mark the response as sent
-                res.json(result); // Send response to the client
+        try {
+            // Regular expression to extract JSON from the output
+            const jsonMatch = output.match(/{.*}/s); // Matches JSON from `{` to `}`
+
+            if (jsonMatch && jsonMatch[0]) {
+                const result = JSON.parse(jsonMatch[0].trim());  // Parse the JSON part
+                console.log('Parsed JSON result:', result);
+
+                res.json(result);
             }
         } catch (error) {
-            console.error('Failed to parse Python script output:', error);            
-            if (!responseSent) {
-                responseSent = true;
+            console.error('Failed to parse Python script output:', error);
+            res.status(500).json({ error: 'Failed to parse Python script output' });
+
+        }
+    });
+
+    // Handle end of Python process
+    pythonProcess.stdout.on('end', () => {
+        // In case the Python process ends without triggering 'data' events for complete output
+        if (!responseSent) {
+            try {
+                const result = JSON.parse(output.trim());
+                res.json(result);
+            } catch (error) {
+                console.error('Failed to parse Python script output on process end:', error);
                 res.status(500).json({ error: 'Failed to parse Python script output' });
             }
         }
     });
 
+    // Handle errors from Python process
+    pythonProcess.stderr.on('data', (data) => {
+        console.error(`stderr: ${data}`);
+        res.status(500).send(data.toString());
+    });
+
+    // Clean up and log when Python process closes
     pythonProcess.on('close', (code) => {
         // Clean up uploaded file after processing
         fs.unlink(imagePath, (err) => {
             if (err) {
                 console.error('Error deleting file:', err);
-            } else {
-                console.log(`File ${imagePath} deleted after processing`);
             }
         });
-        
-        // Log exit code for debugging
+
         console.log(`Python script exited with code ${code}`);
     });
 
-
-
+    // Handle error in spawning Python process
     pythonProcess.on('error', (err) => {
         console.error('Error starting Python process:', err);
-        if (!responseSent) {
-            responseSent = true;
-            res.status(500).json({ error: 'Error starting Python process' });
-        }
+        res.status(500).json({ error: 'Error starting Python process' });
     });
-    pythonProcess.setTimeout(30000, () => { // Timeout after 30 seconds
-        if (!responseSent) {
-            responseSent = true;
-            pythonProcess.kill();
-            res.status(500).json({ error: 'Python script timed out' });
-        }
-    });
+
 });
 
 module.exports = router;

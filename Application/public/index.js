@@ -45,38 +45,43 @@ imageInput.addEventListener('change', (event) => {
  *
  * @param {File} img - The uploaded image file.
  */
+// Function to process the uploaded image
 async function imageProcessing(file) {
-    // Create a FormData object and append the image file
+    // Create FormData and append the file
     const formData = new FormData();
-    formData.append('image', file); // Append the file, not the img element
+    formData.append('image', file);
 
-    // Use fetch to upload the image
-    fetch('/upload', {
-        method: 'POST',
-        body: formData, // Send the FormData object
-    })
-        .then(response => response.json())
-        .then(data => {
-            // Convert the JSON object to a string
-            const dataString = JSON.stringify(data);
-
-            // Log the string representation of the JSON object
-            console.log('Received data:', dataString);
-            // Update results section with the received data
-            scarCount.textContent = data.scarCount;
-            surfaceArea.textContent = `${data.surfaceArea} cm²`;
-            damagePercent.textContent = `${data.damagePercent}%`;
-        })
-
-        .catch(error => {
-            // Handle error
-            console.error('Error processing image:', error);
-        })
-        .finally(() => {
-            // Reset the input field after processing
-            imageInput.value = '';
+    try {
+        // Send request to server and wait for the response
+        const response = await fetch('/upload', {
+            method: 'POST',
+            body: formData, // Send FormData with the image
         });
+
+        console.log('Sent');
+        // Check if response is successful
+        if (!response.ok) {
+            throw new Error(`Error: ${response.statusText}`);
+        }
+
+        // Parse the response JSON
+        const data = await response.json();
+        console.log('Received data:', data);
+
+        // Update UI with the received data
+        scarCount.textContent = data.scarCount;
+        surfaceArea.textContent = `${data.surfaceArea} cm²`;
+        damagePercent.textContent = `${data.damagePercent}%`;
+
+    } catch (error) {
+        console.error('Error processing image:', error);
+    } finally {
+        // Reset the input field after processing
+        imageInput.value = ''; // Clear the input field
+        console.log('Done');
+    }
 }
+
 
 
 /**

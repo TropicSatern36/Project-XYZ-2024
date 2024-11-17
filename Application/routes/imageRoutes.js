@@ -38,6 +38,7 @@ router.post('/', upload.single('image'), (req, res) => {
     pythonProcess.stdin.write(JSON.stringify({ image_path: imagePath }));
     pythonProcess.stdin.end();
 
+    let responseSent = false;
     let output = ''; // To accumulate the Python output
 
 
@@ -48,39 +49,18 @@ router.post('/', upload.single('image'), (req, res) => {
         try {
             // Regular expression to extract JSON from the output
             const jsonMatch = output.match(/{.*}/s); // Matches JSON from `{` to `}`
-
+            
             if (jsonMatch && jsonMatch[0]) {
-                const result = JSON.parse(jsonMatch[0].trim());  // Parse the JSON part
+                let result = JSON.parse(jsonMatch[0].trim());  // Parse the JSON part
                 console.log('Parsed JSON result:', result);
-
                 res.json(result);
             }
         } catch (error) {
-            console.error('Failed to parse Python script output:', error);
+            console.error('Failed to parse Python script output on process end:', error);
             res.status(500).json({ error: 'Failed to parse Python script output' });
-
         }
     });
 
-    // Handle end of Python process
-    pythonProcess.stdout.on('end', () => {
-        // In case the Python process ends without triggering 'data' events for complete output
-        if (!responseSent) {
-            try {
-                const result = JSON.parse(output.trim());
-                res.json(result);
-            } catch (error) {
-                console.error('Failed to parse Python script output on process end:', error);
-                res.status(500).json({ error: 'Failed to parse Python script output' });
-            }
-        }
-    });
-
-    // Handle errors from Python process
-    pythonProcess.stderr.on('data', (data) => {
-        console.error(`stderr: ${data}`);
-        res.status(500).send(data.toString());
-    });
 
     // Clean up and log when Python process closes
     pythonProcess.on('close', (code) => {
@@ -97,7 +77,10 @@ router.post('/', upload.single('image'), (req, res) => {
     // Handle error in spawning Python process
     pythonProcess.on('error', (err) => {
         console.error('Error starting Python process:', err);
-        res.status(500).json({ error: 'Error starting Python process' });
+        if (!responseSent) {
+            res.status(500).json({ error: 'Error starting Python process' });
+            responseSent = true;  // Prevent multiple responses
+        }
     });
 
 });

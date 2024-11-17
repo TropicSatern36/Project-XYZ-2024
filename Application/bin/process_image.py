@@ -40,7 +40,7 @@ if __name__ == "__main__":
 
         # Placeholder values for scar area and damage percent
         scarArea = 0
-        damagePercent = 5
+        damagePercent = 0
 
         # Create the result dictionary with the required data
         result = {

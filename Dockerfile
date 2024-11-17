@@ -1,42 +1,34 @@
-# Use an official Node.js runtime as a parent image
-# This base image provides a minimal Node.js environment, which is essential for running our application.
-#FROM node:22
+# Base Dockerfile - node-python-tensorflow
 
-# Install Python, pip, and required system packages
-# This step is necessary to install Python and its related packages required by our application.
-#RUN apt-get update &&\
-#    apt-get install -y \
-#    python3 \
-#    python3-pip \
-#    python3-dev \
-#    python3-venv \
-#    build-essential && \
-#    apt-get clean && \
-#    rm -rf /var/lib/apt/lists/*
+# Use the official Node 22 image as a base
+FROM node:22
+
+# Install Python, pip, and virtualenv
+RUN apt-get update && \
+    apt-get install -y \
+    python3 \
+    python3-pip \
+    python3-dev \
+    python3-venv \
+    build-essential \
+    libgl1-mesa-glx \
+    && apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
 # Create a virtual environment
-# A virtual environment is created to isolate the Python packages required by our application from the system's packages.
-#RUN python3 -m venv /venv
+RUN python3 -m venv /venv
 
-# Install Python packages
-# The required Python packages are installed within the virtual environment.
-#RUN /venv/bin/pip install --upgrade pip && \
-#    /venv/bin/pip install --no-cache-dir \
-    #tensorflow \
-#    numpy \
-#    matplotlib
+# Install TensorFlow in the virtual environment
+RUN /venv/bin/pip install --upgrade pip && \
+    /venv/bin/pip install \
+    numpy \
+    opencv-python \
+    tensorflow
 
-# Set the environment variable PATH
-# The PATH environment variable is updated to include the virtual environment's binary directory, allowing us to run the installed Python packages.
-#ENV PATH="/venv/bin:$PATH"
+# Set the PATH to include the virtual environment's binaries
+ENV PATH="/venv/bin:$PATH"
 
 # Verify installations (optional, can be removed for a cleaner image)
-# This step is optional and can be removed if you want a cleaner image. It verifies the installed Python version and TensorFlow package.
-#RUN python --version 
-#&& pip show tensorflow
-
-
-FROM ghcr.io/tropicsatern36/projectxyz381:base
 RUN python --version && pip show tensorflow
 # Set the working directory inside the container
 # The WORKDIR instruction sets the working directory for any RUN, CMD, ENTRYPOINT, COPY, and ADD instructions that follow it in the Dockerfile.

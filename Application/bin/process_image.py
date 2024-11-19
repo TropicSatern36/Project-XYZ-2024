@@ -38,15 +38,17 @@ if __name__ == "__main__":
         predicted_objects = model.predict(np.expand_dims(image, axis=0))  # Add batch dimension
         scarCount = predicted_objects[0][0]
 
+
         # Placeholder values for scar area and damage percent
-        scarArea = 0
-        damagePercent = 0
+        scarArea = 0.003
+        damagePercent = 0.003
 
         # Create the result dictionary with the required data
         result = {
-            'scarCount': scarCount.tolist(),  # Convert numpy array to list for JSON serialization
-            'surfaceArea': scarArea,
-            'damagePercent': damagePercent
+            'scarCount': int(round(scarCount.tolist())),  # Convert numpy array to list for JSON serialization
+            # Round to 2 decimal places
+            'surfaceArea': format(round(scarArea,2),'.2f'),
+            'damagePercent': format(round(damagePercent,2),'.2f')
         }
 
         # Output the final result as a JSON string (ensure no extra logs are printed)
